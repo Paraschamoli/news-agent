@@ -19,7 +19,7 @@
 
 ---
 
-## 📖 Overview
+## Overview
 
 News Agent is a sophisticated multi-agent news aggregation system built on the [Bindu Agent Framework](https://github.com/getbindu/bindu) that processes RSS feeds from multiple high-quality sources, categorizes content, identifies trends, and generates comprehensive summaries using coordinated sub-agent architecture.
 
@@ -33,7 +33,7 @@ News Agent is a sophisticated multi-agent news aggregation system built on the [
 
 ---
 
-## 🚀 Quick Start
+## Quick Start
 
 ### Prerequisites
 
@@ -77,21 +77,9 @@ uv run python -m news_agent
 # Agent will be available at http://localhost:3773
 ```
 
-### Github Setup
-
-```bash
-# Initialize git repository and commit your code
-git init -b main
-git add .
-git commit -m "Initial commit"
-
-# Create repository on GitHub and push (replace with your GitHub username)
-gh repo create Paraschamoli/news-agent --public --source=. --remote=origin --push
-```
-
 ---
 
-## 💡 Usage
+## Usage
 
 ### Example Queries
 
@@ -140,7 +128,7 @@ The agent returns structured output with:
 
 ---
 
-## 🔌 API Usage
+## API Usage
 
 The agent exposes a RESTful API when running. Default endpoint: `http://localhost:3773`
 
@@ -158,7 +146,7 @@ For complete API documentation, request/response formats, and examples, visit:
 
 ---
 
-## 🎯 Skills
+## Skills
 
 ### news-agents (v1.0.0)
 
@@ -199,7 +187,7 @@ For complete API documentation, request/response formats, and examples, visit:
 
 ---
 
-## 🐳 Docker Deployment
+## Docker Deployment
 
 ### Local Docker Setup
 
@@ -227,7 +215,7 @@ docker-compose -f docker-compose.prod.yml up -d
 
 ---
 
-## 🌐 Deploy to bindus.directory
+## Deploy to bindus.directory
 
 Make your agent discoverable worldwide and enable agent-to-agent collaboration.
 
@@ -261,7 +249,7 @@ GitHub Actions will automatically:
 
 ---
 
-## 🛠️ Development
+## Development
 
 ### Project Structure
 
@@ -312,7 +300,7 @@ uv run pre-commit run -a
 
 ---
 
-## 🤝 Contributing
+## Contributing
 
 Contributions are welcome! Please follow these steps:
 
@@ -326,13 +314,13 @@ See [CONTRIBUTING.md](CONTRIBUTING.md) for detailed guidelines.
 
 ---
 
-## 📄 License
+## License
 
 This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
 
 ---
 
-## 🙏 Powered by Bindu
+## Powered by Bindu
 
 Built with the [Bindu Agent Framework](https://github.com/getbindu/bindu)
 
@@ -348,7 +336,7 @@ uvx cookiecutter https://github.com/getbindu/create-bindu-agent.git
 
 ---
 
-## 📚 Resources
+## Resources
 
 - 📖 [Full Documentation](https://Paraschamoli.github.io/news-agent/)
 - 💻 [GitHub Repository](https://github.com/Paraschamoli/news-agent/)
