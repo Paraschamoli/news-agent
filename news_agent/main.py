@@ -7,9 +7,7 @@
 #
 #  Thank you users! We ❤️ you! - 🌻
 
-"""news-agent - An Bindu Agent.
-
-"""
+"""news-agent - An Bindu Agent."""
 
 import argparse
 import asyncio
@@ -17,31 +15,35 @@ import json
 import os
 from pathlib import Path
 from textwrap import dedent
-from typing import Any, Optional
-
+from typing import Any
 
 from agno.agent import Agent
 from agno.models.openrouter import OpenRouter
+from agno.team import Team
 from agno.tools import Toolkit
 from agno.tools.mem0 import Mem0Tools
-from agno.team import Team
-
 from bindu.penguin.bindufy import bindufy
 from dotenv import load_dotenv
 
 from news_agent.tools import (
-    get_rss_stories,
-    get_all_rss_stories,
     categorize_stories_by_topic,
-    generate_news_summary,
-    create_sub_agent_task,
-    process_sub_agent_task,
     coordinate_multi_agent_processing,
+    create_sub_agent_task,
+    generate_news_summary,
+    get_all_rss_stories,
+    get_rss_stories,
+    process_sub_agent_task,
 )
-
 
 # Load environment variables from .env file
 load_dotenv()
+
+
+class AgentNotInitializedError(RuntimeError):
+    """Raised when the agent is not initialized."""
+
+    pass
+
 
 # Global tools instances
 news_tools: Toolkit | None = None
@@ -57,6 +59,7 @@ class NewsTools(Toolkit):
     """Custom toolkit for news aggregation and analysis functions."""
 
     def __init__(self):
+        """Initialize the news tools toolkit."""
         super().__init__(name="news_tools")
         self.register(get_rss_stories)
         self.register(get_all_rss_stories)
@@ -80,7 +83,7 @@ def load_config() -> dict:
     # Get path to agent_config.json in project root
     config_path = Path(__file__).parent / "agent_config.json"
 
-    with open(config_path, "r") as f:
+    with open(config_path) as f:
         return json.load(f)
 
 
@@ -220,11 +223,12 @@ async def run_agent(messages: list[dict[str, str]]) -> Any:
     """
     global agent
 
+    if agent is None:
+        raise AgentNotInitializedError
+
     # Run the agent and get response
     response = await agent.arun(messages)
     return response
-
-
 
 
 async def handler(messages: list[dict[str, str]]) -> Any:
@@ -237,7 +241,6 @@ async def handler(messages: list[dict[str, str]]) -> Any:
     Returns:
         Agent response (ManifestWorker will handle extraction)
     """
-    
     # Run agent with messages
     global _initialized
 
@@ -248,7 +251,7 @@ async def handler(messages: list[dict[str, str]]) -> Any:
             # Build environment with API keys
             env = {
                 **os.environ,
-                #"GOOGLE_MAPS_API_KEY": os.getenv("GOOGLE_MAPS_API_KEY", ""),
+                # "GOOGLE_MAPS_API_KEY": os.getenv("GOOGLE_MAPS_API_KEY", ""),
             }
             await initialize_all(env)
             _initialized = True
@@ -256,10 +259,9 @@ async def handler(messages: list[dict[str, str]]) -> Any:
     # Run the async agent
     result = await run_agent(messages)
     return result
-    
 
 
-async def initialize_all(env: Optional[dict[str, str]] = None):
+async def initialize_all(env: dict[str, str] | None = None):
     """Initialize news tools and agent.
 
     Args:
@@ -270,7 +272,7 @@ async def initialize_all(env: Optional[dict[str, str]] = None):
 
 def main():
     """Run the Agent."""
-    global model_name, api_key, mem0_api_key
+    global model_name, openrouter_api_key, mem0_api_key
 
     # Parse command-line arguments
     parser = argparse.ArgumentParser(description="Multi-Agent News Aggregation System with Bindu Framework")
@@ -301,9 +303,9 @@ def main():
     mem0_api_key = args.mem0_api_key
 
     if not openrouter_api_key:
-        raise ValueError("OPENROUTER_API_KEY required") # noqa: TRY003
+        raise ValueError("OPENROUTER_API_KEY required")  # noqa: TRY003
     if not mem0_api_key:
-        raise ValueError("MEM0_API_KEY required. Get your API key from: https://app.mem0.ai/dashboard/api-keys") # noqa: TRY003
+        raise ValueError("MEM0_API_KEY required. Get your API key from: https://app.mem0.ai/dashboard/api-keys")  # noqa: TRY003
 
     print(f"🤖 Multi-Agent News Aggregation System using model: {model_name}")
     print("📰 Comprehensive news processing with multi-agent coordination")

@@ -7,8 +7,7 @@
 #
 #  Thank you users! We ❤️ you! - 🌻
 
-"""news-agent - An Bindu Agent.
-"""
+"""news-agent - An Bindu Agent."""
 
 from news_agent.__version__ import __version__
 from news_agent.main import (
