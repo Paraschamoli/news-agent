@@ -5,9 +5,8 @@ author: paras@getbindu.com
 
 # Description
 description: |
-  Multi-agent news aggregation and analysis system that processes RSS feeds from
-  multiple sources, categorizes content, identifies trends, and generates comprehensive
-  summaries using coordinated sub-agent architecture.
+  Multi-agent news aggregation system that fetches RSS feeds from 6 sources,
+  categorizes stories, and generates structured markdown summaries with trend analysis.
 
 # Tags and Modes
 tags:
@@ -15,10 +14,6 @@ tags:
   - rss-processing
   - multi-agent
   - content-analysis
-  - trend-identification
-  - news-summarization
-  - information-gathering
-  - content-categorization
 
 input_modes:
   - text/plain
@@ -31,64 +26,61 @@ output_modes:
 
 # Example Queries
 examples:
-  - "Process all news sources and generate a comprehensive summary"
-  - "Analyze trending topics across all RSS feeds"
-  - "Get the latest stories from Hacker News and TechCrunch"
-  - "Identify emerging trends in technology news"
-  - "Generate a news summary focused on AI and machine learning topics"
-  - "Compare news coverage between different sources"
-  - "Find stories about specific companies or topics"
+  - "Generate a structured technology news briefing summarizing AI developments"
+  - "Create a global business news briefing covering technology and startup ecosystem"
+  - "Summarize the latest stories from all news sources"
+  - "Get top trending technology news"
 
 # Detailed Capabilities
 capabilities_detail:
   primary_capability:
     supported: true
-    description: "Multi-agent RSS news processing and analysis"
+    description: "RSS feed aggregation from 6 configured sources with parallel processing"
     features:
-      - "Parallel processing of 6 RSS feed sources (Hacker News, WSJ Tech/Markets, TechCrunch, AI News, Wired)"
-      - "Advanced RSS parsing with namespace support for complex feeds"
-      - "Automatic content categorization and topic identification"
-      - "Cross-source trend analysis and pattern recognition"
-      - "Professional news summary generation with structured formatting"
-      - "Multi-agent coordination with task distribution and aggregation"
-      - "Real-time news fetching with retry logic and error handling"
-    limitations: "RSS feeds may have delays of 15-30 minutes for very recent news"
+      - "Fetches from Hacker News, WSJ Tech, WSJ Markets, TechCrunch, AI News, Wired"
+      - "Parallel processing using asyncio.gather"
+      - "Source-specific XML parsers with namespace support"
+      - "Retry logic with exponential backoff (3 attempts, 2-30s wait)"
+      - "Fallback URLs for WSJ and AI News feeds"
+      - "Returns up to 30 stories per source"
+    limitations: "RSS feeds reflect source update schedules, not real-time"
 
   secondary_capability:
     supported: true
-    description: "News trend analysis and content categorization"
+    description: "Story categorization and markdown summary generation"
     features:
-      - "Topic clustering and category distribution analysis"
-      - "Cross-source story comparison and duplicate detection"
-      - "Emerging trend identification with frequency analysis"
-      - "Source-specific content patterns and focus areas"
-      - "Time-based trend analysis and topic evolution"
+      - "Category extraction from RSS metadata"
+      - "Topic frequency counting using Counter"
+      - "Top 10 category identification"
+      - "Markdown formatted output with sections"
+      - "Source distribution statistics"
+    limitations: "Categories depend on RSS feed metadata quality"
 
 # Requirements
 requirements:
   packages:
-    - agno>=2.2.0
-    - bindu>=2026.1.7
-    - httpx>=0.28.1
-    - pandas>=2.3.3
-    - numpy>=2.0
-    - tenacity>=9.1.2
-    - python-dotenv>=1.0.1
-    - openai>=1.60.0
+    - agno
+    - bindu
+    - httpx
+    - defusedxml
+    - tenacity
+    - python-dotenv
   system:
-    - "Internet access for RSS feed fetching"
+    - "Internet access for RSS fetching"
+    - "OPENROUTER_API_KEY environment variable"
+    - "MEM0_API_KEY environment variable"
   min_memory_mb: 512
   external_services:
-    - "RSS feed sources (Hacker News, WSJ, TechCrunch, AI News, Wired)"
+    - "OpenRouter API for LLM"
+    - "Mem0 API for memory (optional)"
+    - "RSS feed endpoints (public)"
 
 # Performance Metrics
 performance:
-  avg_processing_time_ms: 8000
-  avg_time_per_source_ms: 2000
+  avg_processing_time_ms: 75000
   max_concurrent_requests: 6
   memory_per_request_mb: 512
-  timeout_seconds: 120
-  max_stories_per_source: 30
+  timeout_seconds: 30
   scalability: horizontal
 
 # Tool Restrictions
@@ -105,65 +97,159 @@ allowed_tools:
 # Rich Documentation
 documentation:
   overview: |
-    Multi-agent news aggregation system that processes RSS feeds from multiple
-    high-quality sources, categorizes content, identifies trends, and generates
-    comprehensive summaries using coordinated sub-agent architecture.
-
-    The system mimics the functionality of the original news-agents project
-    but with modern production-ready architecture using the Bindu framework.
-
-  key_features:
-    - "Parallel RSS processing from 6 major news sources"
-    - "Advanced XML parsing with namespace support for complex feeds"
-    - "Multi-agent coordination with task distribution and aggregation"
-    - "Automatic content categorization and topic clustering"
-    - "Cross-source trend analysis and pattern recognition"
-    - "Professional markdown summary generation"
-    - "Error handling with retry logic and graceful degradation"
-    - "Real-time news fetching with proper HTTP client management"
+    Single-agent system using OpenRouter LLM that coordinates RSS processing tools.
+    Fetches from 6 hardcoded RSS sources, parses XML with source-specific parsers,
+    and generates markdown summaries. Uses Bindu framework for JSON-RPC interface.
 
   use_cases:
-    - "Daily news briefings and executive summaries"
-    - "Industry trend monitoring and analysis"
-    - "Competitive intelligence gathering"
-    - "Research and content curation"
-    - "Market sentiment analysis through news coverage"
-    - "Topic-specific news aggregation and filtering"
+    when_to_use:
+      - "Technology news briefings from multiple sources"
+      - "Automated news digest generation"
+      - "Trend monitoring across tech news sources"
 
-  methodology:
-    - "Multi-Agent Coordination: Main agent distributes tasks to sub-agents"
-    - "Parallel Processing: All RSS sources processed concurrently"
-    - "Content Parsing: Advanced XML parsing with namespace handling"
-    - "Categorization: Automatic topic identification and clustering"
-    - "Trend Analysis: Cross-source pattern recognition and frequency analysis"
-    - "Summary Generation: Structured markdown output with executive overview"
+    when_not_to_use:
+      - "Real-time breaking news (RSS has delays)"
+      - "Non-technology news domains"
+      - "Custom RSS source configuration (sources are hardcoded)"
 
-  data_sources:
-    - "Hacker News: Technology news and discussions"
-    - "Wall Street Journal (Tech): Business and technology coverage"
-    - "Wall Street Journal (Markets): Financial markets and business news"
-    - "TechCrunch: Startup and technology industry coverage"
-    - "AI News: Artificial intelligence industry news and analysis"
-    - "Wired: Technology, science, and culture coverage"
+  input_structure: |
+    JSON-RPC 2.0 message with user query in parts array.
 
-  output_format:
-    - "Executive summary with global statistics and key trends"
-    - "Source-specific summaries with individual feed analysis"
-    - "Category distribution tables and topic clustering"
-    - "Cross-source trend identification with frequency analysis"
-    - "Structured markdown format for easy integration"
-    - "JSON output for programmatic access"
+    Example:
+    {
+      "jsonrpc": "2.0",
+      "method": "message/send",
+      "params": {
+        "message": {
+          "role": "user",
+          "parts": [{"kind": "text", "text": "Generate AI news briefing"}],
+          "kind": "message",
+          "messageId": "c2f5e710-5616-49ad-b187-d93cbbA00001",
+          "contextId": "c2f5e710-5616-49ad-b187-d93cbbA00002",
+          "taskId": "c2f5e710-5616-49ad-b187-d93cbbA00003"
+        },
+        "skillId": "news-agents-v1",
+        "configuration": {"acceptedOutputModes": ["application/json"]}
+      },
+      "id": "c2f5e710-5616-49ad-b187-d93cbbA00003"
+    }
 
-  limitations:
-    - "RSS feeds may have 15-30 minute delays for very recent content"
-    - "Some feeds may have rate limits or access restrictions"
-    - "Content extraction depends on RSS feed structure and quality"
-    - "Trend analysis is based on available content and may miss broader context"
+  output_format: |
+    JSON-RPC 2.0 result with task status and markdown formatted news summary.
+
+    Success Response (submitted):
+    {
+      "jsonrpc": "2.0",
+      "id": "c2f5e710-5616-49ad-b187-d93cbba00003",
+      "result": {
+        "id": "c2f5e710-5616-49ad-b187-d93cbba00003",
+        "kind": "task",
+        "status": {"state": "submitted", "timestamp": "2026-03-11T03:59:06.621730+00:00"},
+        "history": [{"role": "user", "parts": [{"kind": "text", "text": "..."}]}]
+      }
+    }
+
+    Success Response (completed):
+    {
+      "jsonrpc": "2.0",
+      "result": {
+        "status": {"state": "completed"},
+        "history": [
+          {"role": "user", "parts": [{"kind": "text", "text": "..."}]},
+          {"role": "assistant", "parts": [{"kind": "text", "text": "# Multi-Agent News Summary..."}]}
+        ],
+        "artifacts": [{"name": "result", "parts": [{"kind": "text", "text": "Markdown summary"}]}]
+      }
+    }
+
+  error_handling:
+    - "RSS fetch failures: Retry 3 times with exponential backoff"
+    - "WSJ/AI News failures: Try fallback URLs"
+    - "Parser errors: Skip source and continue with others"
+    - "Partial failures: Return results from successful sources"
+    - "HTTP timeouts: 30 second limit per request"
+
+  examples:
+    - title: "AI Technology News Briefing"
+      input:
+        parts:
+          - kind: "text"
+            text: "Generate a structured technology news briefing summarizing AI developments"
+      output:
+        text: |
+          # Multi-Agent News Summary: AI and Technology Developments 🌐
+
+          ## Executive Overview 📊
+          In a dynamic week for artificial intelligence, the technology landscape continues to evolve...
+
+          ## Key Highlights 🔍
+          ### Research and Funding
+          - **Landmark AI Research Investment**: Yann LeCun secures $1 billion...
+
+          ## Emerging Trends 📈
+          1. AI Contextual Understanding
+          2. Multilingual AI Deployment
 
   best_practices:
-    - "Process all sources simultaneously for comprehensive coverage"
-    - "Use category-based filtering for topic-specific analysis"
-    - "Monitor failed sources and implement retry strategies"
-    - "Combine multiple summaries for comprehensive reporting"
-    - "Use trend analysis for identifying emerging topics and patterns"
-    - "Validate RSS feed structure and handle parsing errors gracefully"
+    for_developers:
+      - "Agent uses coordinate_multi_agent_processing for full workflow"
+      - "All RSS fetches use httpx.AsyncClient with 30s timeout"
+      - "XML parsing uses defusedxml for security"
+      - "Errors logged to stderr via logging module"
+
+    for_orchestrators:
+      - "Route technology news aggregation requests to this skill"
+      - "Expect 60-120 second processing time"
+      - "Task returns 'submitted' immediately, poll tasks/get for completion"
+      - "Supports text/plain and application/json output modes"
+      - "Agent generates markdown by default"
+
+  installation: |
+    Environment variables required:
+    OPENROUTER_API_KEY=<your-key>
+    MEM0_API_KEY=<your-key>
+
+    Run:
+    python -m news_agent.main --model anthropic/claude-3.5-haiku
+
+    Default model: anthropic/claude-3.5-haiku
+    Server runs on port 3773 (configured in agent_config.json)
+
+  versioning:
+    - version: "1.0.0"
+      date: "2026-03-11"
+      changes: "Initial release with 6-source RSS aggregation"
+
+# Assessment fields for skill negotiation
+assessment:
+  keywords:
+    - "news"
+    - "briefing"
+    - "technology"
+    - "AI"
+    - "startup"
+    - "trending"
+    - "summary"
+
+  specializations:
+    - domain: "news-aggregation"
+      confidence_boost: 0.3
+    - domain: "technology-news"
+      confidence_boost: 0.2
+
+  anti_patterns:
+    - "Real-time chat conversations"
+    - "Non-technology news domains"
+    - "Custom RSS source configuration"
+    - "Historical news analysis beyond RSS feed retention"
+
+  complexity_indicators:
+    simple:
+      - "Get latest tech news"
+      - "Summarize news from all sources"
+    medium:
+      - "Generate structured AI news briefing"
+      - "Create business news briefing with sections"
+    complex:
+      - "Deep trend analysis with cross-source correlation"
+      - "Multi-topic comparative analysis"
